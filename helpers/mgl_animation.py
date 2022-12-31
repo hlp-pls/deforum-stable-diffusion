@@ -1,6 +1,6 @@
 #@title Pixel Shader Animation Definitions
 
-def mgl_render_frame(args, anim_args, return_img):
+def mgl_render_frame(MGL_fbo, args, anim_args, return_img):
   MGL_fbo.render()
 
   if return_img == True:
@@ -9,7 +9,7 @@ def mgl_render_frame(args, anim_args, return_img):
     img = np.frombuffer(img_buf, np.uint8).reshape(MGL_fbo.size[1], MGL_fbo.size[0], 4)[::-1]
     return img
     
-def anim_frame_warp_mgl(prev_img_cv2, depth_tensor, args, anim_args, keys, frame_idx):
+def anim_frame_warp_mgl(MGL_fbo, prev_img_cv2, depth_tensor, args, anim_args, keys, frame_idx):
   if MGL_fbo.depth_set == False:
     depth_pil_image = depth_tensor_to_PIL(depth_tensor)
     MGL_fbo.set_depth_img(depth_pil_image)
@@ -26,7 +26,7 @@ def anim_frame_warp_mgl(prev_img_cv2, depth_tensor, args, anim_args, keys, frame
     if frame_time < frame_length - 1:
       mgl_render_frame(args, anim_args, False)
     else:
-      output_pil_img = mgl_render_frame(args, anim_args, True)
+      output_pil_img = mgl_render_frame(MGL_fbo, args, anim_args, True)
 
   output_np_img = np.array(output_pil_img)
   output_img = cv2.cvtColor(output_np_img, cv2.COLOR_RGB2BGR)
