@@ -105,7 +105,7 @@ def render_image_batch(args, prompts, root):
             display.display(grid_image)
 
 
-def render_animation(args, anim_args, animation_prompts, MGL_fbo = None, root):
+def render_animation(args, anim_args, animation_prompts, MGL_fbo, root):
     # animations use key framed prompts
     args.prompts = animation_prompts
 
