@@ -9,7 +9,7 @@ import re
 import pathlib
 import os
 import pandas as pd
-from .mgl_framebuffer import anim_frame_warp_mgl
+from .mgl_animation import anim_frame_warp_mgl
 
 def check_is_number(value):
     float_pattern = r'^(?=.)([+-]?([0-9]*)(\.([0-9]+))?)$'
