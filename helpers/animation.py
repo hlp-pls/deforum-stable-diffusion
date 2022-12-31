@@ -163,7 +163,7 @@ def warpMatrix(W, H, theta, phi, gamma, scale, fV):
 
     return M33, sideLength
 
-def anim_frame_warp(prev, args, anim_args, keys, frame_idx, depth_model=None, depth=None, device='cuda'):
+def anim_frame_warp(prev, args, anim_args, keys, frame_idx, depth_model=None, depth=None, device='cuda', MGL_fbo=None):
     if isinstance(prev, np.ndarray):
         prev_img_cv2 = prev
     else:
@@ -178,7 +178,7 @@ def anim_frame_warp(prev, args, anim_args, keys, frame_idx, depth_model=None, de
     if anim_args.animation_mode == '2D':
         prev_img = anim_frame_warp_2d(prev_img_cv2, args, anim_args, keys, frame_idx)
     elif anim_args.animation_mode == 'MGL':
-        prev_img = anim_frame_warp_mgl(prev_img_cv2, depth, args, anim_args, keys, frame_idx)
+        prev_img = anim_frame_warp_mgl(MGL_fbo, prev_img_cv2, depth, args, anim_args, keys, frame_idx)
     else: # '3D'
         prev_img = anim_frame_warp_3d(device, prev_img_cv2, depth, anim_args, keys, frame_idx)
                 
