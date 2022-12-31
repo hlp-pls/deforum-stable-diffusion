@@ -1,6 +1,7 @@
 #@title Pixel Shader Animation Definitions
 
 from einops import rearrange, repeat
+import numpy as np
 
 #https://github.com/deforum/stable-diffusion/blob/main/helpers/depth.py
 depth_min = 1000
