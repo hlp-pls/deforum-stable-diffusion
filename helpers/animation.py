@@ -9,6 +9,7 @@ import re
 import pathlib
 import os
 import pandas as pd
+from .mgl_framebuffer import anim_frame_warp_mgl
 
 def check_is_number(value):
     float_pattern = r'^(?=.)([+-]?([0-9]*)(\.([0-9]+))?)$'
@@ -176,6 +177,8 @@ def anim_frame_warp(prev, args, anim_args, keys, frame_idx, depth_model=None, de
 
     if anim_args.animation_mode == '2D':
         prev_img = anim_frame_warp_2d(prev_img_cv2, args, anim_args, keys, frame_idx)
+	elif anim_args.animation_mode == 'MGL':
+		prev_img = anim_frame_warp_mgl(prev_img_cv2, args, anim_args, keys, frame_idx)
     else: # '3D'
         prev_img = anim_frame_warp_3d(device, prev_img_cv2, depth, anim_args, keys, frame_idx)
                 
