@@ -105,7 +105,7 @@ def render_image_batch(args, prompts, root):
             display.display(grid_image)
 
 
-def render_animation(args, anim_args, animation_prompts, root):
+def render_animation(args, anim_args, animation_prompts, MGL_fbo = None, root):
     # animations use key framed prompts
     args.prompts = animation_prompts
 
@@ -146,7 +146,7 @@ def render_animation(args, anim_args, animation_prompts, root):
     using_vid_init = anim_args.animation_mode == 'Video Input'
 
     # load depth model for 3D
-    predict_depths = (anim_args.animation_mode == '3D' and anim_args.use_depth_warping) or anim_args.save_depth_maps
+    predict_depths = anim_args.animation_mode == 'MGL' or (anim_args.animation_mode == '3D' and anim_args.use_depth_warping) or anim_args.save_depth_maps
     if predict_depths:
         depth_model = DepthModel(root.device)
         depth_model.load_midas(root.models_path, root.half_precision)
@@ -203,13 +203,13 @@ def render_animation(args, anim_args, animation_prompts, root):
                     depth = depth_model.predict(turbo_next_image, anim_args)
 
                 if advance_prev:
-                    turbo_prev_image, _ = anim_frame_warp(turbo_prev_image, args, anim_args, keys, tween_frame_idx, depth_model, depth=depth, device=root.device)
+                    turbo_prev_image, _ = anim_frame_warp(turbo_prev_image, args, anim_args, keys, tween_frame_idx, depth_model, depth=depth, device=root.device, MGL_fbo=MGL_fbo)
                 if advance_next:
-                    turbo_next_image, _ = anim_frame_warp(turbo_next_image, args, anim_args, keys, tween_frame_idx, depth_model, depth=depth, device=root.device)
+                    turbo_next_image, _ = anim_frame_warp(turbo_next_image, args, anim_args, keys, tween_frame_idx, depth_model, depth=depth, device=root.device, MGL_fbo=MGL_fbo)
                 # Transformed raw image before color coherence and noise. Used for mask overlay
                 if args.use_mask and args.overlay_mask:
                     # Apply transforms to the original image
-                    init_image_raw, _ = anim_frame_warp(args.init_sample_raw, args, anim_args, keys, frame_idx, depth_model, depth, device=root.device)
+                    init_image_raw, _ = anim_frame_warp(args.init_sample_raw, args, anim_args, keys, frame_idx, depth_model, depth, device=root.device, MGL_fbo=MGL_fbo)
                     if root.half_precision:
                         args.init_sample_raw = sample_from_cv2(init_image_raw).half().to(root.device)
                     else:
@@ -220,7 +220,7 @@ def render_animation(args, anim_args, animation_prompts, root):
                     if args.mask_sample is None:
                         args.mask_sample = prepare_overlay_mask(args, root, prev_sample.shape)
                     # Transform the mask
-                    mask_image, _ = anim_frame_warp(args.mask_sample, args, anim_args, keys, frame_idx, depth_model, depth, device=root.device)
+                    mask_image, _ = anim_frame_warp(args.mask_sample, args, anim_args, keys, frame_idx, depth_model, depth, device=root.device, MGL_fbo=MGL_fbo)
                     if root.half_precision:
                         args.mask_sample = sample_from_cv2(mask_image).half().to(root.device)
                     else:
@@ -242,12 +242,12 @@ def render_animation(args, anim_args, animation_prompts, root):
 
         # apply transforms to previous frame
         if prev_sample is not None:
-            prev_img, depth = anim_frame_warp(prev_sample, args, anim_args, keys, frame_idx, depth_model, depth=None, device=root.device)
+            prev_img, depth = anim_frame_warp(prev_sample, args, anim_args, keys, frame_idx, depth_model, depth=None, device=root.device, MGL_fbo=MGL_fbo)
             
             # Transformed raw image before color coherence and noise. Used for mask overlay
             if args.use_mask and args.overlay_mask:
                 # Apply transforms to the original image
-                init_image_raw, _ = anim_frame_warp(args.init_sample_raw, args, anim_args, keys, frame_idx, depth_model, depth, device=root.device)
+                init_image_raw, _ = anim_frame_warp(args.init_sample_raw, args, anim_args, keys, frame_idx, depth_model, depth, device=root.device, MGL_fbo=MGL_fbo)
                 
                 if root.half_precision:
                     args.init_sample_raw = sample_from_cv2(init_image_raw).half().to(root.device)
@@ -259,7 +259,7 @@ def render_animation(args, anim_args, animation_prompts, root):
                 if args.mask_sample is None:
                     args.mask_sample = prepare_overlay_mask(args, root, prev_sample.shape)
                 # Transform the mask
-                mask_sample, _ = anim_frame_warp(args.mask_sample, args, anim_args, keys, frame_idx, depth_model, depth, device=root.device)
+                mask_sample, _ = anim_frame_warp(args.mask_sample, args, anim_args, keys, frame_idx, depth_model, depth, device=root.device, MGL_fbo=MGL_fbo)
                 
                 if root.half_precision:
                     args.mask_sample = sample_from_cv2(mask_sample).half().to(root.device)
