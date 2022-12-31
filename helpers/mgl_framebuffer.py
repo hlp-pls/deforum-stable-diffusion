@@ -178,21 +178,4 @@ class mglFBO:
 
 
 
-from einops import rearrange, repeat
 
-#https://github.com/deforum/stable-diffusion/blob/main/helpers/depth.py
-depth_min = 1000
-depth_max = -1000
-def depth_tensor_to_PIL(depth):
-  global depth_min
-  global depth_max
-  depth = depth.cpu().numpy()
-  if len(depth.shape) == 2:
-    depth = np.expand_dims(depth, axis=0)
-  depth_min = min(depth_min, depth.min())
-  depth_max = max(depth_max, depth.max())
-  #print(f"  depth min:{depth.min()} max:{depth.max()}")
-  denom = max(1e-8, depth_max - depth_min)
-  temp = rearrange((depth - depth_min) / denom * 255, 'c h w -> h w c')
-  temp = repeat(temp, 'h w 1 -> h w c', c=3)
-  return Image.fromarray(temp.astype(np.uint8))
