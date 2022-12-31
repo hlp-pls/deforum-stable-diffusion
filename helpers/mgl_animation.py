@@ -47,7 +47,7 @@ def anim_frame_warp_mgl(MGL_fbo, prev_img_cv2, depth_tensor, args, anim_args, ke
   frame_length = anim_args.mgl_steps
   for frame_time in range(frame_length):
     if frame_time < frame_length - 1:
-      mgl_render_frame(args, anim_args, False)
+      mgl_render_frame(MGL_fbo, args, anim_args, False)
     else:
       output_pil_img = mgl_render_frame(MGL_fbo, args, anim_args, True)
 
