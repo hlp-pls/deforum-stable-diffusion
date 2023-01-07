@@ -130,7 +130,7 @@ class mglFBO:
     im_WIDTH, im_HEIGHT, im_DATA = im.size[0], im.size[1], im.convert('RGBA').tobytes("raw", "RGBA", 0, -1)
     self.depth_texture = self.ctx.texture((im.size[0], im.size[1]), components=4, data=im_DATA)
     self.depth_texture_uniform = self.prog.get('depth_texture', FakeUniform())
-    self.depth_set = True
+    #self.depth_set = True
     
     
   def clear(self):
