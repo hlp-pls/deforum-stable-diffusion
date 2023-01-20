@@ -33,9 +33,9 @@ def mgl_render_frame(MGL_fbo, args, anim_args, return_img):
     return img
     
 def anim_frame_warp_mgl(MGL_fbo, prev_img_cv2, depth_tensor, args, anim_args, keys, frame_idx):
-  if MGL_fbo.depth_set == False:
-    depth_pil_image = depth_tensor_to_PIL(depth_tensor)
-    MGL_fbo.set_depth_img(depth_pil_image)
+  #if MGL_fbo.depth_set == False:
+  depth_pil_image = depth_tensor_to_PIL(depth_tensor)
+  MGL_fbo.set_depth_img(depth_pil_image)
 
   #https://www.zinnunkebi.com/python-opencv-pil-convert/
   color_coverted = cv2.cvtColor(prev_img_cv2, cv2.COLOR_BGR2RGB)
